@@ -3,11 +3,26 @@
 
 ### Things to install for this project:
 
->Read the full document for the programs you'll need [here]()
+##### Google Earth Pro
 
-Necessary data files (these are the google earth data files we'll be using): 
+https://www.google.com/earth/versions/#earth-pro
 
-[Download here]()
+>Default installation options are fine.
+
+##### Git Bash
+
+https://git-scm.com/downloads
+
+>Used for processing basic git commands (read "How to add your code" to get started).
+
+##### SourceTree
+
+https://www.sourcetreeapp.com/
+
+>Not required, but it's nice if you don't like using command line tools.
+>Requires account creation on another site. It should be fairly straightforward.
+
+
 
 
 ### How to add your code

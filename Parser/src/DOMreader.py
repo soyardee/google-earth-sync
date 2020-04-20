@@ -1,11 +1,12 @@
-from xml.dom.minidom import parse
 import xml.dom.minidom as dom
 from zipfile import ZipFile
-import shutil
+import os
+
 
 def extractKMZ(file, dest):
     with ZipFile(file, 'r') as zf:
         zf.extractall(dest)
+
 
 extractKMZ('test.kmz', './file1')
 extractKMZ('kmz2test.kmz', './file2')
@@ -37,7 +38,6 @@ for new_place in places2:
         original_description = old_place.getElementsByTagName("description")[0].firstChild.data
         original_coordinates_string = old_place.getElementsByTagName("coordinates")[0].firstChild.data
 
-        #print("{} == {} ?". format(test_name.firstChild.data, original_name.firstChild.data))
 
         # found the same entry name in the old one, so we can skip it from appending
         if str(test_name).lower() == str(original_name).lower():
@@ -53,9 +53,11 @@ for new_place in places2:
     if append_flag:
         folder = docRootOriginal.getElementsByTagName("Folder")
         folderExists = False
+        folder_pointer = ""
         for name in folder:
             if name.getElementsByTagName("name")[0].firstChild.data == "Import":
                 folderExists = True
+                folder_pointer = name
 
         if not folderExists:
             import_folder = originalDataStruct.createElement("Folder")
@@ -73,13 +75,26 @@ for new_place in places2:
             import_folder.appendChild(folder_open)
             import_folder.appendChild(folder_desc)
 
-            docRootOriginal.appendChild(import_folder)
+            doc_root = originalDataStruct.getElementsByTagName("Document")[0]
+
+            doc_root.appendChild(import_folder)
+
+            folder_pointer = import_folder
+
+        # now append that sucker to the import folder!
+        folder_pointer.appendChild(new_place)
 
 
-print(originalDataStruct.toprettyxml())
+output_file = open("doc.kml", "w")
 
-            
+messy_output = originalDataStruct.toxml()
+
+output_file.write(messy_output)
+output_file.close()
 
 
-
-
+output_zip = ZipFile('output_test.kmz', 'w')
+output_zip.write('doc.kml')
+if os.path.isdir("file1/files"):
+    output_zip.write("file1/files")
+output_zip.close()

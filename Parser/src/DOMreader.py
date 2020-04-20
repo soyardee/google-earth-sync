@@ -42,13 +42,7 @@ for new_place in places2:
         # found the same entry name in the old one, so we can skip it from appending
         if str(test_name).lower() == str(original_name).lower():
             append_flag = False
-            if test_description != original_description:
-                desc_update = True
-                #TODO prompt the user dialog (up the callstack)
-                print("Non-matching description for element: {}".format(original_name))
-                print("Original: {}".format(original_description))
-                print("New: {}".format(test_description))
-                #TODO update the old entry with the new description
+            break
 
     if append_flag:
         folder = docRootOriginal.getElementsByTagName("Folder")

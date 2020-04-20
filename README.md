@@ -1,4 +1,4 @@
-## Google Earth Pro Synchronization Tool
+## Google Earth Pro Import Tool
 
 
 ### Things to install for this project:

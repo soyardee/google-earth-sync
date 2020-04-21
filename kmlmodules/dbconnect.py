@@ -12,7 +12,7 @@ class DBConnect:
     def createTables(self):
         c = self.conn.cursor()
         create_names = "CREATE TABLE IF NOT EXISTS names  (" \
-            "user_id int(3) PRIMARY KEY NOT NULL, " \
+            "user_id INTEGER PRIMARY KEY AUTOINCREMENT, " \
             "user_name varchar(30)); "
         create_merges = "CREATE TABLE IF NOT EXISTS merges (" \
             "merge_id int(16) PRIMARY KEY NOT NULL, " \
@@ -33,12 +33,19 @@ class DBConnect:
     # insert a dictionary into the table
     """
     format: {
-                user_name_lower: string
+                user_name: string
                 timestamp: Date()
                 file1: string
                 file2: string
                 outfile: string
                 conflicts: int
             }
-"""
+    """
+
+    def insert_name(self, name):
+        c = self.conn.cursor()
+        sql = "INSERT INTO names (user_name) " \
+              "SELECT (?) WHERE NOT EXISTS (SELECT 1 FROM names WHERE user_name=(?));"
+        c.execute(sql, (name, name))
+        self.conn.commit()
 

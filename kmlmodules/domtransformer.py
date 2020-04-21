@@ -10,7 +10,7 @@ import shutil
 """
 
 # TODO (someday) upgrade to XSLT (it's faster, has support for namespaces, and formats correctly)
-class DOMReader:
+class DOMTransformer:
     def __init__(self, inputKMZtemplate, inputKMZcompare, outputKMZdir="./processed/out.kmz", tempDir="./tmp"):
         # user variables
         self.inputTemplate = inputKMZtemplate

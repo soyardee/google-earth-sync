@@ -1,0 +1,10 @@
+.idea
+*.iml
+out/
+*.xml
+*.kml
+*.kmz
+*.png
+README.md
+digest/
+__pycache__

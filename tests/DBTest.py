@@ -1,7 +1,6 @@
 from kmlmodules.dbconnect import DBConnect
+from datetime import datetime
 
-db_interpreter = DBConnect("D:\Libraries\Google Drive\projects\code\python\kml-sync-tool\history")
-db_interpreter.createTables()
-db_interpreter.insert_test("bob")
-db_interpreter.insert_test("joe")
-db_interpreter.insert_test("bob")
+db = DBConnect("data.db", "D:\Libraries\Google Drive\projects\code\python\kml-sync-tool\history")
+
+db.insert_history("bobbin", datetime.now(), "kmzin1.kmz", "kmzin2.kmz", "kmzout.kmz", 115)

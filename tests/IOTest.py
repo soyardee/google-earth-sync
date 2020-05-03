@@ -1,8 +1,9 @@
 from modules.domtransformer import DOMTransformer
 
 runtime = DOMTransformer(
-    "./digest/test.kmz",
-    "./digest/kmz2test.kmz",
+    "../digest/Sawyer's Places.kmz",
+    "../digest/Coworker's Places.kmz",
+    "../digest/out.kmz"
 )
 runtime.process()
 runtime.writeOut()

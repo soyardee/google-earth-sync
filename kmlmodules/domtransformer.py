@@ -2,6 +2,7 @@ import xml.dom.minidom as dom
 from zipfile import ZipFile
 import os
 import shutil
+import pathlib
 
 """
 @author Sawyer Timperley
@@ -11,7 +12,7 @@ import shutil
 
 # TODO (someday) upgrade to XSLT (it's faster, has support for namespaces, and formats correctly)
 class DOMTransformer:
-    def __init__(self, inputKMZtemplate, inputKMZcompare, outputKMZdir="./processed/out.kmz", tempDir="./tmp"):
+    def __init__(self, inputKMZtemplate, inputKMZcompare, outputKMZdir="../processed/out.kmz", tempDir="./tmp"):
         # user variables
         self.inputTemplate = inputKMZtemplate
         self.inputCompare = inputKMZcompare
@@ -130,8 +131,8 @@ class DOMTransformer:
     def getCompareKMZPath(self):
         return self.inputCompare
 
-    def getOuputKMZPath(self):
-        return self.outputPath
+    def getOutputKMZPath(self):
+        return pathlib.Path(self.outputPath).absolute()
 
     def setTemplateKMZ(self, path):
         self.inputTemplate = path

@@ -6,35 +6,33 @@ from kmlmodules.dbconnect import DBConnect as DBConnect
 from kmlmodules.domtransformer import DOMTransformer
 import os
 
+"""
+@author Sawyer Timperley
+@date   2020-05-03
+@title  User Interface Construction
+"""
 
+
+# frame containing two sub frames
+# allows the independent frames to communicate via object reference. Not ideal, but could be worse (co-dependent)
 class UserMain(ttk.Frame):
     def __init__(self, parent):
         # set up database object, stores all file processing history
         self.db = DBConnect("data.db", "../history")
-
         ttk.Frame.__init__(self, parent)
-
-        history = HistoryPanel(self, self.db).grid(column=0, row=1)
+        history = HistoryPanel(self, self.db)
+        history.grid(column=0, row=1)
         UserFields(self, self.db, history).grid(column=0, row=0)
-
-
-
         self.pack()
 
 
+# a grid of all user input fields and buttons
 class UserFields(ttk.Frame):
-    def __init__(self, parent, connection, historypane):
+    def __init__(self, parent, connection, history):
         self.DIR_TEXT_SIZE = 70
         self.conn = connection
-        self.history = historypane
-
+        self.historyPane = history
         ttk.Frame.__init__(self, parent, padding="10 10 10 10")
-
-        self.current_user = ""
-        self.templatePath = ""
-        self.copyPath = ""
-        self.outputPath = ""
-        self.conflictCount = 0
 
         ttk.Label(self, text="Original KMZ File:").grid(column=0, row=0, sticky=tk.W)
         self.templateFilePath = tk.StringVar()
@@ -62,29 +60,34 @@ class UserFields(ttk.Frame):
 
         ttk.Label(self, text="History").grid(column=0, row=11, sticky="w")
 
-
+    # dialog boxes that open when the browse button is clicked
 
     def askopenfiletemplate(self):
-        path = filedialog.askopenfilename(initialdir="../", title="Select template file", filetypes=(("kmz files", "*.kmz"),))
+        path = filedialog.askopenfilename(initialdir="../", title="Select template file",
+                                          filetypes=(("kmz files", "*.kmz"),))
         self.templatePath = path
         self.templateFilePath.set(self.templatePath)
         return
 
     def askopencopy(self):
-        path = filedialog.askopenfilename(initialdir="../", title="Select comparison file", filetypes=(("kmz files", "*.kmz"),))
+        path = filedialog.askopenfilename(initialdir="../", title="Select comparison file",
+                                          filetypes=(("kmz files", "*.kmz"),))
         self.copyFilePath.set(path)
         return
 
     def askopenoutputfile(self):
         path = ""
-        path = filedialog.asksaveasfilename(initialdir="../", title="Save out file to", filetypes=(("kmz files", "*.kmz"),))
-
+        path = filedialog.asksaveasfilename(initialdir="../",
+                                            title="Save out file to",
+                                            filetypes=(("kmz files", "*.kmz"),))
+        # appends the kmz file type to the end if the user only types in a name, and not the type.
         if ".kmz" not in path and path != "":
             path += ".kmz"
 
         self.outFilePath.set(path)
         return
 
+    # validates and runs xml transform with user file entries
     def processXML(self):
         if self.templateFilePath.get() == "":
             tk.messagebox.showinfo('Missing Data', 'Please input template file!')
@@ -96,11 +99,14 @@ class UserFields(ttk.Frame):
             tk.messagebox.showinfo('Missing Data', 'Please input username!')
             return
 
+        # xml transform engine reference
         runtime = ""
 
         convert_success = False
         try:
             if self.outFilePath.get() != "":
+                # unorthodox programming practice below. Typically, you would pass the empty string into the class and
+                # it figures out the rest from there. This looks gross, but does work.
                 runtime = DOMTransformer(self.templateFilePath.get(), self.copyFilePath.get(), self.outFilePath.get())
             else:
                 runtime = DOMTransformer(self.templateFilePath.get(), self.copyFilePath.get())
@@ -108,6 +114,7 @@ class UserFields(ttk.Frame):
             runtime.writeOut()
             tk.messagebox.showinfo('Success', f"Number of imported locations: {runtime.getAppendCount()}")
             convert_success = True
+        # catch a non-kmz file if it cannot be opened, or if some other error occurs.
         except Exception as e:
             tk.messagebox.showinfo('Error', f'Error opening files!: {e}')
 
@@ -121,8 +128,11 @@ class UserFields(ttk.Frame):
             self.conn.insert_history(name, count, templateName, copyName, outputName)
 
             time = datetime.now().strftime("%Y-%m-%d %H:%M")
+            # add entry to the panel without requiring another database read.
+            self.historyPane.update_history(time, name, copyName, templateName, count)
 
 
+# display all previous processes by user
 class HistoryPanel(ttk.Frame):
     def __init__(self, parent, connection):
         self.parent = parent
@@ -150,14 +160,11 @@ class HistoryPanel(ttk.Frame):
 
     # don't pull from the database each time a file is converted.
     # It is already added, and will be pulled properly on the next reload.
-    # not unlike dirty tracking.
+    # not unlike dirty tracking, seen in angular apps on the web.
     def update_history(self, time, user, copyfile, infile, count):
         entry = f"{time}: {user} merged {copyfile} into {infile}, {count} imported."
-        self.historyBox.insert(tk.FIRST, entry)
+        self.historyBox.insert(0, entry)
         return
-
-    def get_panel(self):
-        return self.historyBox
 
 
 if __name__ == "__main__":
@@ -165,7 +172,4 @@ if __name__ == "__main__":
     root.title("KML Importer Tool")
     root.geometry("600x500")
     UserMain(root)
-    root.rowconfigure(0, weight=1)
-    root.columnconfigure(0, weight=1)
     root.mainloop()
-

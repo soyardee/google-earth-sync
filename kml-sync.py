@@ -2,8 +2,8 @@ import tkinter as tk
 from tkinter import filedialog, messagebox
 import tkinter.ttk as ttk
 from datetime import datetime
-from kmlmodules.dbconnect import DBConnect as DBConnect
-from kmlmodules.domtransformer import DOMTransformer
+from modules.dbconnect import DBConnect as DBConnect
+from modules.domtransformer import DOMTransformer
 import os
 
 """
@@ -18,7 +18,7 @@ import os
 class UserMain(ttk.Frame):
     def __init__(self, parent):
         # set up database object, stores all file processing history
-        self.db = DBConnect("data.db", "../history")
+        self.db = DBConnect("data.db", "./history")
         ttk.Frame.__init__(self, parent)
         history = HistoryPanel(self, self.db)
         history.grid(column=0, row=1)
@@ -63,21 +63,21 @@ class UserFields(ttk.Frame):
     # dialog boxes that open when the browse button is clicked
 
     def askopenfiletemplate(self):
-        path = filedialog.askopenfilename(initialdir="../", title="Select template file",
+        path = filedialog.askopenfilename(initialdir="./", title="Select template file",
                                           filetypes=(("kmz files", "*.kmz"),))
         self.templatePath = path
         self.templateFilePath.set(self.templatePath)
         return
 
     def askopencopy(self):
-        path = filedialog.askopenfilename(initialdir="../", title="Select comparison file",
+        path = filedialog.askopenfilename(initialdir="./", title="Select comparison file",
                                           filetypes=(("kmz files", "*.kmz"),))
         self.copyFilePath.set(path)
         return
 
     def askopenoutputfile(self):
         path = ""
-        path = filedialog.asksaveasfilename(initialdir="../",
+        path = filedialog.asksaveasfilename(initialdir="./",
                                             title="Save out file to",
                                             filetypes=(("kmz files", "*.kmz"),))
         # appends the kmz file type to the end if the user only types in a name, and not the type.

@@ -1,4 +1,4 @@
-from kmlmodules.domtransformer import DOMTransformer
+from modules.domtransformer import DOMTransformer
 
 runtime = DOMTransformer(
     "./digest/test.kmz",

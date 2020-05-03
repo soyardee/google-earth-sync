@@ -1,5 +1,4 @@
-from kmlmodules.dbconnect import DBConnect
-from datetime import datetime
+from modules.dbconnect import DBConnect
 
 db = DBConnect("data.db", "D:\Libraries\Google Drive\projects\code\python\kml-sync-tool\history")
 
